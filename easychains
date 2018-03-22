@@ -1,0 +1,29 @@
+#!/bin/bash
+#
+#This script was developed to let you connect to public proxies automatically
+#It uses proxies from socks-proxy.net.Remember that these proxies aren't 
+#reliable and your traffic might be monitored.
+#To begin using this script you have to do the following:
+#1) Install proxychains, html2text
+#	apt-get install proxychains
+#	apt-get install html2text
+#2) Download the package and unpack it to root directory
+#	cd /root/easychains 
+#	rm /etc/proxychains.conf
+#3) Now everytime you run ./easychains. the list of your proxies will be
+#updated. 
+#4) I recommend you to add easychains to your cron file and get it to
+#update every 20 or 30 min or everytime you boot up
+# e.g. */15 * * * * /root/easychains/easychains
+# 	  (Proxies are updated every 15 min) 
+#
+##############################################################################
+
+/usr/bin/curl https://socks-proxy.net | /bin/grep -Eo '<td>.*</td>' | /usr/bin/html2text | /bin/grep -Eo '[0-9]{4,5}|\b([0-9]{1,3}\.){3}[0-9]{1,3}\b' | /usr/bin/awk 'ORS=NR%2?FS:RS' | /usr/bin/awk '{print "socks5 "$0}' > /root/easychains/proxylist 
+/bin/cat /root/easychains/template /root/easychains/proxylist > /etc/proxychains.conf
+
+
+ 
+
+
+
